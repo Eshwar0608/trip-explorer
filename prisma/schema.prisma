@@ -1,0 +1,46 @@
+generator client {
+  provider   = "prisma-client-js"
+  engineType = "client"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id       String   @id @default(cuid())
+  name     String?
+  email    String   @unique
+  password String
+  role     String   @default("customer")
+  places   Place[]
+  reviews  Review[]
+}
+
+model Place {
+  id                     String   @id @default(cuid())
+  name                   String
+  state                  String
+  district               String
+  city                   String
+  distanceFromBusStation Float
+  famousFor              String
+  description            String
+  status                 String   @default("pending")
+  createdAt              DateTime @default(now())
+  createdById            String
+  createdBy              User     @relation(fields: [createdById], references: [id], onDelete: Cascade)
+  reviews                Review[]
+}
+
+model Review {
+  id        String   @id @default(cuid())
+  rating    Int
+  comment   String
+  createdAt DateTime @default(now())
+  placeId   String
+  userId    String
+  place     Place    @relation(fields: [placeId], references: [id], onDelete: Cascade)
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
