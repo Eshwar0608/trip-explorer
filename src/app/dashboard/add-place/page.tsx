@@ -81,11 +81,15 @@ export default function AddPlacePage() {
       return;
     }
 
-    if (session?.user?.role === "admin") {
-      router.push("/dashboard/admin/pending");
-    } else {
-      router.push("/dashboard/customer/submissions");
-    }
+    const role =
+      session?.user?.role ??
+      (await fetch("/api/auth/session").then((r) => r.json()))?.user?.role;
+
+    router.push(
+      role === "admin"
+        ? "/dashboard/admin/pending"
+        : "/dashboard/customer/submissions"
+    );
     router.refresh();
   }
 

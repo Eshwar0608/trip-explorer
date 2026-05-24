@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { redirect } from "next/navigation";
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth-options";
 import { prisma } from "@/lib/prisma";
@@ -9,7 +10,12 @@ export const dynamic = "force-dynamic";
 
 export default async function SubmissionsPage() {
   const session = await getServerSession(authOptions);
-  if (!session?.user) return null;
+  if (!session?.user) {
+    redirect("/login?callbackUrl=/dashboard/customer/submissions");
+  }
+  if (session.user.role !== "customer") {
+    redirect("/dashboard/admin");
+  }
 
   const places = await prisma.place.findMany({
     where: { createdById: session.user.id },

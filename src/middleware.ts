@@ -17,6 +17,10 @@ export default withAuth(
       return NextResponse.redirect(new URL("/login", req.url));
     }
 
+    if (path === "/dashboard/customer/add-place") {
+      return NextResponse.redirect(new URL("/dashboard/add-place", req.url));
+    }
+
     if (path.startsWith("/dashboard/customer") && token?.role !== "customer") {
       if (token?.role === "admin") {
         return NextResponse.redirect(new URL("/dashboard/admin", req.url));
