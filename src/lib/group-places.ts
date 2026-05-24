@@ -39,11 +39,15 @@ export function groupPlacesByStateAndCity(
 
   const result: PlacesByState[] = [];
 
-  for (const state of [...stateMap.keys()].sort((a, b) => a.localeCompare(b))) {
+  for (const state of Array.from(stateMap.keys()).sort((a, b) =>
+    a.localeCompare(b)
+  )) {
     const cityMap = stateMap.get(state)!;
     const cities: PlacesByCity[] = [];
 
-    for (const city of [...cityMap.keys()].sort((a, b) => a.localeCompare(b))) {
+    for (const city of Array.from(cityMap.keys()).sort((a, b) =>
+      a.localeCompare(b)
+    )) {
       const cityPlaces = cityMap.get(city)!;
       cityPlaces.sort((a, b) => a.name.localeCompare(b.name));
       cities.push({ city, places: cityPlaces });
