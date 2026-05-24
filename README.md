@@ -114,7 +114,6 @@ In **Project Settings → Environment Variables**, add:
 | Name | Value |
 |------|--------|
 | `DATABASE_URL` | Supabase **Transaction pooler** URI (`?pgbouncer=true`) |
-| `DIRECT_DATABASE_URL` | Supabase **Direct** URI (port 5432; used for `prisma migrate deploy` on build) |
 | `NEXTAUTH_SECRET` | Same secret as local |
 | `NEXTAUTH_URL` | `https://your-app.vercel.app` |
 | `NEXT_PUBLIC_SUPABASE_URL` | Project URL (Settings → API) |
@@ -145,7 +144,7 @@ ALTER TABLE "Review" ADD COLUMN IF NOT EXISTS "images" TEXT[] NOT NULL DEFAULT A
 npx prisma migrate deploy
 ```
 
-**Option C — Redeploy on Vercel** after setting `DIRECT_DATABASE_URL` (see env table above). The build script runs `prisma migrate deploy` automatically.
+**Option C — Redeploy on Vercel** (build runs `prisma migrate deploy` if the pooler allows it). If the build fails on migrate, use Option A SQL, then redeploy.
 
 Then seed if needed:
 
@@ -155,7 +154,7 @@ npm run db:seed
 
 ### 6. Deploy
 
-Vercel runs `npm run build`, which runs `prisma generate`, `prisma migrate deploy`, then `next build`.
+Vercel runs `npm run build` (`prisma generate` + `next build`). Apply DB changes with **Option A** or `npm run db:migrate:deploy` from your machine before/after deploy.
 
 ## Prisma commands
 
