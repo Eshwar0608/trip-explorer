@@ -4,7 +4,8 @@
   "private": true,
   "scripts": {
     "dev": "prisma generate && node scripts/copy-prisma-wasm.mjs && next dev",
-    "build": "prisma generate && node scripts/copy-prisma-wasm.mjs && next build",
+    "build": "prisma generate && node scripts/ensure-images-columns.mjs && node scripts/copy-prisma-wasm.mjs && next build",
+    "db:fix-images": "node scripts/ensure-images-columns.mjs",
     "start": "next start",
     "lint": "next lint",
     "postinstall": "prisma generate && node scripts/copy-prisma-wasm.mjs",

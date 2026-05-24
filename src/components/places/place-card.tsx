@@ -9,7 +9,7 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { averageRating } from "@/lib/utils";
+import { averageRating, cn } from "@/lib/utils";
 
 type PlaceCardProps = {
   id: string;
@@ -35,16 +35,23 @@ export function PlaceCard({
   status,
 }: PlaceCardProps) {
   const avg = averageRating(reviews.map((r) => r.rating));
+  const isClickable = status === "approved" || !status;
+  const href = isClickable ? `/places/${id}` : undefined;
 
-  return (
-    <Card className="group overflow-hidden transition-shadow hover:shadow-lg">
+  const card = (
+    <Card
+      className={cn(
+        "overflow-hidden transition-shadow",
+        isClickable && "group-hover:shadow-lg"
+      )}
+    >
       {images[0] && (
         <div className="relative aspect-[16/10] w-full bg-muted">
           <Image
             src={images[0]}
             alt={name}
             fill
-            className="object-cover"
+            className="object-cover transition-transform duration-300 group-hover:scale-[1.02]"
             sizes="(max-width: 768px) 100vw, 400px"
           />
           {images.length > 1 && (
@@ -56,7 +63,12 @@ export function PlaceCard({
       )}
       <CardHeader className="pb-3">
         <div className="flex items-start justify-between gap-2">
-          <CardTitle className="line-clamp-1 text-lg group-hover:text-primary">
+          <CardTitle
+            className={cn(
+              "line-clamp-1 text-lg",
+              isClickable && "group-hover:text-primary"
+            )}
+          >
             {name}
           </CardTitle>
           {status && (
@@ -94,15 +106,25 @@ export function PlaceCard({
             </span>
           )}
         </div>
-        {status === "approved" || !status ? (
-          <Link
-            href={`/places/${id}`}
-            className="inline-block text-sm font-medium text-primary hover:underline"
-          >
+        {isClickable && (
+          <span className="inline-block text-sm font-medium text-primary group-hover:underline">
             View details →
-          </Link>
-        ) : null}
+          </span>
+        )}
       </CardContent>
     </Card>
+  );
+
+  if (!href) {
+    return card;
+  }
+
+  return (
+    <Link
+      href={href}
+      className="group block rounded-xl focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
+    >
+      {card}
+    </Link>
   );
 }
