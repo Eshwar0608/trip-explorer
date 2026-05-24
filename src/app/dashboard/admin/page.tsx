@@ -60,6 +60,9 @@ export default async function AdminDashboardPage() {
 
       <div className="flex flex-wrap gap-4">
         <Button asChild>
+          <Link href="/dashboard/add-place">Add new place</Link>
+        </Button>
+        <Button variant="outline" asChild>
           <Link href="/dashboard/admin/pending">
             Review pending ({pending})
           </Link>

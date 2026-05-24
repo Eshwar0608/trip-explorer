@@ -2,6 +2,7 @@ import { DashboardNav } from "@/components/layout/dashboard-nav";
 
 const navItems = [
   { href: "/dashboard/admin", label: "Overview" },
+  { href: "/dashboard/add-place", label: "Add Place" },
   { href: "/dashboard/admin/pending", label: "Pending Places" },
   { href: "/dashboard/admin/approved", label: "Approved Places" },
   { href: "/dashboard/admin/reviews", label: "Manage Reviews" },

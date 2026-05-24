@@ -17,7 +17,10 @@ export function DashboardNav({ items }: { items: NavItem[] }) {
           href={item.href}
           className={cn(
             "rounded-md px-3 py-2 text-sm font-medium transition-colors",
-            pathname === item.href
+            pathname === item.href ||
+              (item.href !== "/dashboard/admin" &&
+                item.href !== "/dashboard/customer" &&
+                pathname.startsWith(item.href))
               ? "bg-primary text-primary-foreground"
               : "text-muted-foreground hover:bg-muted hover:text-foreground"
           )}

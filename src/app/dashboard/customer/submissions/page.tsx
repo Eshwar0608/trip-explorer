@@ -22,7 +22,7 @@ export default async function SubmissionsPage() {
       <div className="mb-6 flex items-center justify-between">
         <h2 className="text-lg font-semibold">My Submissions</h2>
         <Button asChild>
-          <Link href="/dashboard/customer/add-place">Add place</Link>
+          <Link href="/dashboard/add-place">Add place</Link>
         </Button>
       </div>
 

@@ -23,16 +23,18 @@ export function ReviewForm({ placeId }: { placeId: string }) {
     setError("");
 
     let images: string[] = [];
-    try {
-      images = await uploadImages(imageFiles);
-    } catch (uploadError) {
-      setLoading(false);
-      setError(
-        uploadError instanceof Error
-          ? uploadError.message
-          : "Failed to upload images"
-      );
-      return;
+    if (imageFiles.length > 0) {
+      try {
+        images = await uploadImages(imageFiles);
+      } catch (uploadError) {
+        setLoading(false);
+        setError(
+          uploadError instanceof Error
+            ? uploadError.message
+            : "Failed to upload images"
+        );
+        return;
+      }
     }
 
     const res = await fetch("/api/reviews", {
@@ -90,12 +92,14 @@ export function ReviewForm({ placeId }: { placeId: string }) {
           placeholder="Share your experience..."
         />
       </div>
-      <ImageUpload
-        files={imageFiles}
-        onChange={setImageFiles}
-        label="Review photos"
-        disabled={loading}
-      />
+      <div className="rounded-lg border border-dashed p-4">
+        <ImageUpload
+          files={imageFiles}
+          onChange={setImageFiles}
+          label="Review photos (optional)"
+          disabled={loading}
+        />
+      </div>
       <Button type="submit" disabled={loading}>
         {loading ? "Submitting..." : "Submit review"}
       </Button>

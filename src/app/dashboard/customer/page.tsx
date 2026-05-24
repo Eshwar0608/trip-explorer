@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { redirect } from "next/navigation";
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth-options";
 import { prisma } from "@/lib/prisma";
@@ -10,7 +11,12 @@ export const dynamic = "force-dynamic";
 
 export default async function CustomerDashboardPage() {
   const session = await getServerSession(authOptions);
-  if (!session?.user) return null;
+  if (!session?.user) {
+    redirect("/login?callbackUrl=/dashboard/customer");
+  }
+  if (session.user.role !== "customer") {
+    redirect("/dashboard/admin");
+  }
 
   const [pending, approved, rejected] = await Promise.all([
     prisma.place.count({
@@ -68,7 +74,7 @@ export default async function CustomerDashboardPage() {
 
       <div className="flex gap-4">
         <Button asChild>
-          <Link href="/dashboard/customer/add-place">Add new place</Link>
+          <Link href="/dashboard/add-place">Add new place</Link>
         </Button>
         <Button variant="outline" asChild>
           <Link href="/dashboard/customer/submissions">View submissions</Link>

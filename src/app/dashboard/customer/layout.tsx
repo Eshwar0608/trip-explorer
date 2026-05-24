@@ -2,7 +2,7 @@ import { DashboardNav } from "@/components/layout/dashboard-nav";
 
 const navItems = [
   { href: "/dashboard/customer", label: "Overview" },
-  { href: "/dashboard/customer/add-place", label: "Add Place" },
+  { href: "/dashboard/add-place", label: "Add Place" },
   { href: "/dashboard/customer/submissions", label: "My Submissions" },
 ];
 

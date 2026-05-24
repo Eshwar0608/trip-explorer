@@ -18,6 +18,9 @@ export function Header() {
   const navLinks = [
     { href: "/", label: "Home" },
     { href: "/places", label: "Explore" },
+    ...(session?.user?.role === "admin" || session?.user?.role === "customer"
+      ? [{ href: "/dashboard/add-place", label: "Add Place" }]
+      : []),
   ];
 
   return (
