@@ -7,30 +7,40 @@ const globalForPrisma = globalThis as unknown as {
   pool: Pool | undefined;
 };
 
-const isArmWindows =
-  process.platform === "win32" && process.arch === "arm64";
+function createPrismaClient(): PrismaClient {
+  const connectionString = process.env.DATABASE_URL;
+  if (!connectionString) {
+    throw new Error("DATABASE_URL environment variable is not set");
+  }
 
-function createPrismaClient() {
-  if (isArmWindows && process.env.DATABASE_URL) {
-    const pool =
-      globalForPrisma.pool ??
-      new Pool({ connectionString: process.env.DATABASE_URL });
-    if (!globalForPrisma.pool) globalForPrisma.pool = pool;
-    return new PrismaClient({
-      adapter: new PrismaPg(pool),
-      log:
-        process.env.NODE_ENV === "development" ? ["error", "warn"] : ["error"],
-    });
+  const pool =
+    globalForPrisma.pool ??
+    new Pool({ connectionString });
+  if (!globalForPrisma.pool) {
+    globalForPrisma.pool = pool;
   }
 
   return new PrismaClient({
+    adapter: new PrismaPg(pool),
     log:
       process.env.NODE_ENV === "development" ? ["error", "warn"] : ["error"],
   });
 }
 
-export const prisma = globalForPrisma.prisma ?? createPrismaClient();
-
-if (process.env.NODE_ENV !== "production") {
-  globalForPrisma.prisma = prisma;
+function getPrismaClient(): PrismaClient {
+  if (!globalForPrisma.prisma) {
+    globalForPrisma.prisma = createPrismaClient();
+  }
+  return globalForPrisma.prisma;
 }
+
+/** Lazy client — avoids initializing Prisma during `next build` route analysis. */
+export const prisma = new Proxy({} as PrismaClient, {
+  get(_target, prop, receiver) {
+    const client = getPrismaClient();
+    const value = Reflect.get(client, prop, receiver);
+    return typeof value === "function"
+      ? (value as (...args: unknown[]) => unknown).bind(client)
+      : value;
+  },
+});
