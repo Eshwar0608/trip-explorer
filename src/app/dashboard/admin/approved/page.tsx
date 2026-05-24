@@ -3,6 +3,7 @@ import { prisma } from "@/lib/prisma";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { PlaceActions } from "@/components/admin/place-actions";
+import { AdminImageGallery } from "@/components/admin/admin-image-gallery";
 import { Button } from "@/components/ui/button";
 
 export const dynamic = "force-dynamic";
@@ -36,11 +37,24 @@ export default async function ApprovedPlacesPage() {
                 </div>
                 <Badge variant="success">approved</Badge>
               </CardHeader>
-              <CardContent className="flex flex-wrap items-center justify-between gap-4">
+              <CardContent className="space-y-4">
+                {place.images.length > 0 && (
+                  <div>
+                    <p className="mb-2 text-sm font-medium">Photos</p>
+                    <AdminImageGallery
+                      type="place"
+                      entityId={place.id}
+                      images={place.images}
+                      alt={place.name}
+                    />
+                  </div>
+                )}
+                <div className="flex flex-wrap items-center justify-between gap-4">
                 <Button variant="link" className="px-0" asChild>
                   <Link href={`/places/${place.id}`}>View public page</Link>
                 </Button>
                 <PlaceActions placeId={place.id} showApprove={false} />
+                </div>
               </CardContent>
             </Card>
           ))}

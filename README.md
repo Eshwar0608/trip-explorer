@@ -52,7 +52,11 @@ Fill in:
 DATABASE_URL="postgresql://postgres.[ref]:[password]@aws-0-[region].pooler.supabase.com:6543/postgres?pgbouncer=true"
 NEXTAUTH_SECRET="your-random-secret"
 NEXTAUTH_URL="http://localhost:3000"
+NEXT_PUBLIC_SUPABASE_URL="https://YOUR_PROJECT.supabase.co"
+SUPABASE_SERVICE_ROLE_KEY="your-service-role-key"
 ```
+
+Create a public Storage bucket named `trip-images` in Supabase (see deploy section).
 
 Generate `NEXTAUTH_SECRET`:
 
@@ -112,8 +116,18 @@ In **Project Settings → Environment Variables**, add:
 | `DATABASE_URL` | Supabase **Transaction pooler** URI (`?pgbouncer=true`) |
 | `NEXTAUTH_SECRET` | Same secret as local |
 | `NEXTAUTH_URL` | `https://your-app.vercel.app` |
+| `NEXT_PUBLIC_SUPABASE_URL` | Project URL (Settings → API) |
+| `SUPABASE_SERVICE_ROLE_KEY` | Service role key (server-only; never expose to client) |
 
-### 4. Run migrations on production
+### 4. Supabase Storage (image uploads)
+
+1. In Supabase → **Storage**, create a **public** bucket named `trip-images`.
+2. Under bucket policies, allow public read (or use Supabase’s public bucket default).
+3. Add `NEXT_PUBLIC_SUPABASE_URL` and `SUPABASE_SERVICE_ROLE_KEY` to `.env` and Vercel.
+
+Customers can attach up to **6 images** (JPEG, PNG, WebP, GIF; 5 MB each) when adding a place or writing a review.
+
+### 5. Run migrations on production
 
 From your machine (with production `DATABASE_URL` in `.env` or inline):
 
@@ -124,7 +138,7 @@ npm run db:seed
 
 Or use Supabase SQL editor after `prisma migrate dev` locally and committing the `prisma/migrations` folder.
 
-### 5. Deploy
+### 6. Deploy
 
 Vercel runs `npm run build`, which includes `prisma generate` via the `build` script.
 

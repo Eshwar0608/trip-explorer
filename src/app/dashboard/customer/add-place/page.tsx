@@ -14,6 +14,8 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import { LocationSelect } from "@/components/places/location-select";
+import { ImageUpload } from "@/components/ui/image-upload";
+import { uploadImages } from "@/lib/upload-images";
 
 export default function AddPlacePage() {
   const router = useRouter();
@@ -24,6 +26,7 @@ export default function AddPlacePage() {
   const [distance, setDistance] = useState("");
   const [famousFor, setFamousFor] = useState("");
   const [description, setDescription] = useState("");
+  const [imageFiles, setImageFiles] = useState<File[]>([]);
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
 
@@ -31,6 +34,19 @@ export default function AddPlacePage() {
     e.preventDefault();
     setLoading(true);
     setError("");
+
+    let images: string[] = [];
+    try {
+      images = await uploadImages(imageFiles);
+    } catch (uploadError) {
+      setLoading(false);
+      setError(
+        uploadError instanceof Error
+          ? uploadError.message
+          : "Failed to upload images"
+      );
+      return;
+    }
 
     const res = await fetch("/api/places", {
       method: "POST",
@@ -43,6 +59,7 @@ export default function AddPlacePage() {
         distanceFromBusStation: parseFloat(distance),
         famousFor,
         description,
+        images,
       }),
     });
 
@@ -133,6 +150,13 @@ export default function AddPlacePage() {
               placeholder="Describe the place, how to reach it, best time to visit..."
             />
           </div>
+
+          <ImageUpload
+            files={imageFiles}
+            onChange={setImageFiles}
+            label="Place photos"
+            disabled={loading}
+          />
 
           <Button type="submit" disabled={loading}>
             {loading ? "Submitting..." : "Submit for approval"}

@@ -8,6 +8,7 @@ const reviewSchema = z.object({
   placeId: z.string(),
   rating: z.number().int().min(1).max(5),
   comment: z.string().min(5),
+  images: z.array(z.string().url()).max(6).optional().default([]),
 });
 
 export async function GET() {

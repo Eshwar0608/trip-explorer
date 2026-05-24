@@ -4,6 +4,7 @@ import { prisma } from "@/lib/prisma";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { ReviewActions } from "@/components/admin/review-actions";
 import { formatDate } from "@/lib/utils";
+import { AdminImageGallery } from "@/components/admin/admin-image-gallery";
 
 export const dynamic = "force-dynamic";
 
@@ -47,6 +48,16 @@ export default async function ManageReviewsPage() {
               <CardContent className="flex flex-wrap items-end justify-between gap-4">
                 <div>
                   <p className="text-muted-foreground">{review.comment}</p>
+                  {review.images.length > 0 && (
+                    <div className="mt-4 max-w-xl">
+                      <AdminImageGallery
+                        type="review"
+                        entityId={review.id}
+                        images={review.images}
+                        alt={`Review on ${review.place.name}`}
+                      />
+                    </div>
+                  )}
                   <p className="mt-2 text-xs text-muted-foreground">
                     {formatDate(review.createdAt)}
                   </p>

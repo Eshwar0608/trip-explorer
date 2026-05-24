@@ -1,0 +1,5 @@
+-- AlterTable
+ALTER TABLE "Place" ADD COLUMN "images" TEXT[] NOT NULL DEFAULT ARRAY[]::TEXT[];
+
+-- AlterTable
+ALTER TABLE "Review" ADD COLUMN "images" TEXT[] NOT NULL DEFAULT ARRAY[]::TEXT[];

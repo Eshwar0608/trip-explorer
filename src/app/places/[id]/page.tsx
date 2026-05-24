@@ -9,6 +9,8 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { ReviewForm } from "@/components/reviews/review-form";
 import { Separator } from "@/components/ui/separator";
+import { ImageGallery } from "@/components/ui/image-gallery";
+import { AdminImageGallery } from "@/components/admin/admin-image-gallery";
 
 export const dynamic = "force-dynamic";
 
@@ -41,6 +43,7 @@ export default async function PlaceDetailPage({
   }
 
   const avg = averageRating(place.reviews.map((r) => r.rating));
+  const isAdmin = session?.user?.role === "admin";
   const canReview =
     session?.user?.role === "customer" &&
     place.status === "approved" &&
@@ -80,6 +83,22 @@ export default async function PlaceDetailPage({
         <p className="mt-8 leading-relaxed text-muted-foreground">
           {place.description}
         </p>
+
+        {place.images.length > 0 && (
+          <div className="mt-8">
+            <h2 className="mb-3 text-lg font-semibold">Photos</h2>
+            {isAdmin ? (
+              <AdminImageGallery
+                type="place"
+                entityId={place.id}
+                images={place.images}
+                alt={place.name}
+              />
+            ) : (
+              <ImageGallery images={place.images} alt={place.name} />
+            )}
+          </div>
+        )}
 
         {place.status === "approved" && canReview && (
           <div className="mt-10 rounded-xl border bg-card p-6">
@@ -125,6 +144,23 @@ export default async function PlaceDetailPage({
                   </span>
                 </div>
                 <p className="mt-2 text-muted-foreground">{review.comment}</p>
+                {review.images.length > 0 && (
+                  <div className="mt-4">
+                    {isAdmin ? (
+                      <AdminImageGallery
+                        type="review"
+                        entityId={review.id}
+                        images={review.images}
+                        alt={`Review by ${review.user.name || "Traveler"}`}
+                      />
+                    ) : (
+                      <ImageGallery
+                        images={review.images}
+                        alt={`Review by ${review.user.name || "Traveler"}`}
+                      />
+                    )}
+                  </div>
+                )}
                 <p className="mt-2 text-xs text-muted-foreground">
                   {formatDate(review.createdAt)}
                 </p>

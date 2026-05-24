@@ -12,6 +12,7 @@ const placeSchema = z.object({
   distanceFromBusStation: z.number().positive(),
   famousFor: z.string().min(2),
   description: z.string().min(10),
+  images: z.array(z.string().url()).max(6).optional().default([]),
 });
 
 export async function GET(req: Request) {

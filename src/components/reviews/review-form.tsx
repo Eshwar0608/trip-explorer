@@ -6,11 +6,14 @@ import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Select } from "@/components/ui/select";
+import { ImageUpload } from "@/components/ui/image-upload";
+import { uploadImages } from "@/lib/upload-images";
 
 export function ReviewForm({ placeId }: { placeId: string }) {
   const router = useRouter();
   const [rating, setRating] = useState("5");
   const [comment, setComment] = useState("");
+  const [imageFiles, setImageFiles] = useState<File[]>([]);
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
 
@@ -19,6 +22,19 @@ export function ReviewForm({ placeId }: { placeId: string }) {
     setLoading(true);
     setError("");
 
+    let images: string[] = [];
+    try {
+      images = await uploadImages(imageFiles);
+    } catch (uploadError) {
+      setLoading(false);
+      setError(
+        uploadError instanceof Error
+          ? uploadError.message
+          : "Failed to upload images"
+      );
+      return;
+    }
+
     const res = await fetch("/api/reviews", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
@@ -26,6 +42,7 @@ export function ReviewForm({ placeId }: { placeId: string }) {
         placeId,
         rating: parseInt(rating, 10),
         comment,
+        images,
       }),
     });
 
@@ -39,6 +56,7 @@ export function ReviewForm({ placeId }: { placeId: string }) {
 
     router.refresh();
     setComment("");
+    setImageFiles([]);
   }
 
   return (
@@ -72,6 +90,12 @@ export function ReviewForm({ placeId }: { placeId: string }) {
           placeholder="Share your experience..."
         />
       </div>
+      <ImageUpload
+        files={imageFiles}
+        onChange={setImageFiles}
+        label="Review photos"
+        disabled={loading}
+      />
       <Button type="submit" disabled={loading}>
         {loading ? "Submitting..." : "Submit review"}
       </Button>

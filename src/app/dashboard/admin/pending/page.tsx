@@ -3,6 +3,7 @@ import { Badge } from "@/components/ui/badge";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { PlaceActions } from "@/components/admin/place-actions";
 import { formatDate } from "@/lib/utils";
+import { AdminImageGallery } from "@/components/admin/admin-image-gallery";
 
 export const dynamic = "force-dynamic";
 
@@ -48,6 +49,17 @@ export default async function PendingPlacesPage() {
                     <span className="font-medium">Description:</span>{" "}
                     {place.description}
                   </p>
+                  {place.images.length > 0 && (
+                    <div className="sm:col-span-2">
+                      <p className="mb-2 font-medium">Photos</p>
+                      <AdminImageGallery
+                        type="place"
+                        entityId={place.id}
+                        images={place.images}
+                        alt={place.name}
+                      />
+                    </div>
+                  )}
                   <p>
                     <span className="font-medium">Submitted by:</span>{" "}
                     {place.createdBy.name || place.createdBy.email}

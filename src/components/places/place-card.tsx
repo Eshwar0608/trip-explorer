@@ -1,4 +1,5 @@
 import Link from "next/link";
+import Image from "next/image";
 import { MapPin, Star, Bus } from "lucide-react";
 import {
   Card,
@@ -18,6 +19,7 @@ type PlaceCardProps = {
   famousFor: string;
   distanceFromBusStation: number;
   reviews?: { rating: number }[];
+  images?: string[];
   status?: string;
 };
 
@@ -29,12 +31,29 @@ export function PlaceCard({
   famousFor,
   distanceFromBusStation,
   reviews = [],
+  images = [],
   status,
 }: PlaceCardProps) {
   const avg = averageRating(reviews.map((r) => r.rating));
 
   return (
     <Card className="group overflow-hidden transition-shadow hover:shadow-lg">
+      {images[0] && (
+        <div className="relative aspect-[16/10] w-full bg-muted">
+          <Image
+            src={images[0]}
+            alt={name}
+            fill
+            className="object-cover"
+            sizes="(max-width: 768px) 100vw, 400px"
+          />
+          {images.length > 1 && (
+            <span className="absolute bottom-2 right-2 rounded-md bg-background/90 px-2 py-0.5 text-xs font-medium">
+              +{images.length - 1} more
+            </span>
+          )}
+        </div>
+      )}
       <CardHeader className="pb-3">
         <div className="flex items-start justify-between gap-2">
           <CardTitle className="line-clamp-1 text-lg group-hover:text-primary">
