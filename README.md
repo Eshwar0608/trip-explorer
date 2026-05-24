@@ -114,6 +114,7 @@ In **Project Settings → Environment Variables**, add:
 | Name | Value |
 |------|--------|
 | `DATABASE_URL` | Supabase **Transaction pooler** URI (`?pgbouncer=true`) |
+| `DIRECT_DATABASE_URL` | Supabase **Direct** URI (port 5432; used for `prisma migrate deploy` on build) |
 | `NEXTAUTH_SECRET` | Same secret as local |
 | `NEXTAUTH_URL` | `https://your-app.vercel.app` |
 | `NEXT_PUBLIC_SUPABASE_URL` | Project URL (Settings → API) |
@@ -129,18 +130,32 @@ Customers can attach up to **6 images** (JPEG, PNG, WebP, GIF; 5 MB each) when a
 
 ### 5. Run migrations on production
 
-From your machine (with production `DATABASE_URL` in `.env` or inline):
+**If you see** `Column (not available) does not exist` / `P2022` on Vercel, the `images` columns were never added. Fix it using one of these:
+
+**Option A — Supabase SQL editor** (fastest):
+
+```sql
+ALTER TABLE "Place" ADD COLUMN IF NOT EXISTS "images" TEXT[] NOT NULL DEFAULT ARRAY[]::TEXT[];
+ALTER TABLE "Review" ADD COLUMN IF NOT EXISTS "images" TEXT[] NOT NULL DEFAULT ARRAY[]::TEXT[];
+```
+
+**Option B — Prisma CLI** (use the **direct** connection string, not the pooler):
 
 ```bash
 npx prisma migrate deploy
+```
+
+**Option C — Redeploy on Vercel** after setting `DIRECT_DATABASE_URL` (see env table above). The build script runs `prisma migrate deploy` automatically.
+
+Then seed if needed:
+
+```bash
 npm run db:seed
 ```
 
-Or use Supabase SQL editor after `prisma migrate dev` locally and committing the `prisma/migrations` folder.
-
 ### 6. Deploy
 
-Vercel runs `npm run build`, which includes `prisma generate` via the `build` script.
+Vercel runs `npm run build`, which runs `prisma generate`, `prisma migrate deploy`, then `next build`.
 
 ## Prisma commands
 
