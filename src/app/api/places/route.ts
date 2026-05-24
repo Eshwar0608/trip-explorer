@@ -4,8 +4,6 @@ import { z } from "zod";
 import { authOptions } from "@/lib/auth-options";
 import { prisma } from "@/lib/prisma";
 
-export const runtime = "nodejs";
-
 const placeSchema = z.object({
   name: z.string().min(2),
   state: z.string().min(1),

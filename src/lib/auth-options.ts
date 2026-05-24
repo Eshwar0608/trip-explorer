@@ -3,22 +3,8 @@ import CredentialsProvider from "next-auth/providers/credentials";
 import bcrypt from "bcryptjs";
 import { prisma } from "@/lib/prisma";
 
-const NEXTAUTH_SECRET = process.env.NEXTAUTH_SECRET;
-const NEXTAUTH_URL = process.env.NEXTAUTH_URL;
-
-if (process.env.NODE_ENV === "production") {
-  if (!NEXTAUTH_SECRET) {
-    throw new Error("Missing NEXTAUTH_SECRET environment variable. Set it in Vercel.");
-  }
-  if (!NEXTAUTH_URL) {
-    throw new Error("Missing NEXTAUTH_URL environment variable. Set it in Vercel.");
-  }
-}
-
 export const authOptions: NextAuthOptions = {
-  secret: NEXTAUTH_SECRET,
   session: { strategy: "jwt" },
-  debug: process.env.NODE_ENV === "development",
   pages: {
     signIn: "/login",
   },

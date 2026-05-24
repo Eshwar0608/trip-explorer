@@ -4,8 +4,6 @@ import { z } from "zod";
 import { authOptions } from "@/lib/auth-options";
 import { prisma } from "@/lib/prisma";
 
-export const runtime = "nodejs";
-
 const reviewSchema = z.object({
   placeId: z.string(),
   rating: z.number().int().min(1).max(5),

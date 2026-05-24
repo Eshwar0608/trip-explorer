@@ -3,8 +3,6 @@ import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth-options";
 import { prisma } from "@/lib/prisma";
 
-export const runtime = "nodejs";
-
 export async function DELETE(
   _req: Request,
   { params }: { params: { id: string } }
